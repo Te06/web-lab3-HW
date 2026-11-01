@@ -28,7 +28,7 @@
 
 /* Hiệu ứng khi nút được nhấn (Active) */
 .pad.active, .pad:active {
-  background-color: #4caf50;
+  background-color: #1b5e20;
   color: white;
   transform: scale(0.95);
 }
