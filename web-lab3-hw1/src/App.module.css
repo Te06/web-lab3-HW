@@ -1,0 +1,67 @@
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: system-ui, sans-serif;
+  text-align: center;
+}
+
+.drumPads {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.pad {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100px;
+  background-color: #f0f0f0;
+  border: 2px solid #333;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.1s;
+}
+
+/* Hiệu ứng khi nút được nhấn (Active) */
+.pad.active, .pad:active {
+  background-color: #4caf50;
+  color: white;
+  transform: scale(0.95);
+}
+
+/* Viền focus cho người dùng bàn phím (Chuẩn A11y) */
+.pad:focus-visible {
+  outline: 3px solid #005fcc;
+  outline-offset: 2px;
+}
+
+.keyLabel {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.soundName {
+  font-size: 0.9rem;
+  text-transform: uppercase;
+}
+
+.hitLogContainer {
+  margin-top: 2rem;
+  padding: 1rem;
+  background-color: #222;
+  color: #fff;
+  border-radius: 8px;
+}
+
+.hitLog {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 1.2rem;
+  font-family: monospace;
+  min-height: 1.5rem;
+}
