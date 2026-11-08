@@ -46,11 +46,15 @@
 
 .pianoWrapper {
   display: flex;
+  align-items: flex-start; /* Căn thẳng hàng từ trên xuống */
   position: relative;
-  height: 200px;
+  height: 220px;
   overflow-x: auto;
   max-width: 100%;
   background-color: #222;
   padding: 10px;
   border-radius: 8px;
+  /* Thêm scrollbar cho đẹp */
+  scrollbar-width: thin;
+  scrollbar-color: #555 #222;
 }

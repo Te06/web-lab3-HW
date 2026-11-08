@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState, useId } from 'react';
 import { generate88Keys } from './utils/pianoUtils';
 import { PolyphonicSynth } from './audio/PolyphonicSynth';
 import { PianoKey } from './components/PianoKey';
@@ -7,6 +7,9 @@ import { useSequencer } from './hooks/useSequencer';
 import styles from './App.module.css';
 
 function App() {
+  // Tạo ID duy nhất cho thẻ select để fix lỗi A11y
+  const speedSelectId = useId();
+  
   const synthRef = useRef(new PolyphonicSynth(8));
   const keys = useMemo(() => generate88Keys(), []);
   const [pressedKeys, setPressedKeys] = useState<Set<number>>(new Set());
@@ -79,7 +82,12 @@ function App() {
           Stop
         </button>
 
+        {/* Thêm label cho select để đạt chuẩn A11y */}
+        <label htmlFor={speedSelectId} style={{ alignSelf: 'center', fontWeight: 'bold' }}>
+          Speed:
+        </label>
         <select 
+          id={speedSelectId}
           className={styles.select}
           value={sequencer.speed} 
           onChange={(e) => sequencer.setSpeed(Number(e.target.value))}

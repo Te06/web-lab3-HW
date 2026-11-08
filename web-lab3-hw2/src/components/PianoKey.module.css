@@ -1,5 +1,6 @@
+/* Khung phím trắng */
 .keyWhite {
-  width: 40px;
+  width: 44px;
   height: 200px;
   background-color: #fff;
   border: 1px solid #ccc;
@@ -12,32 +13,35 @@
   color: #333;
   cursor: pointer;
   box-sizing: border-box;
+  position: relative;
   z-index: 1;
   user-select: none;
-  position: relative;
 }
 
+/* Khung phím đen: Dùng margin âm để đè lên phím trắng */
 .keyBlack {
-  width: 24px;
+  width: 28px;
   height: 120px;
-  background-color: #222;
+  background-color: #111;
   border: 1px solid #000;
-  border-radius: 0 0 3px 3px;
+  border-radius: 0 0 4px 4px;
   display: flex;
   align-items: flex-end;
   justify-content: center;
   padding-bottom: 8px;
-  font-size: 8px;
+  font-size: 9px;
   color: #fff;
   cursor: pointer;
   box-sizing: border-box;
   z-index: 2;
-  margin-left: -12px; /* Kéo phím đen đè lên phím trắng */
-  margin-right: -12px;
+  margin-left: -14px; /* Kéo sang trái 1 nửa */
+  margin-right: -14px; /* Kéo sang phải 1 nửa để đè lên 2 phím trắng */
   user-select: none;
 }
 
+/* Khi phím được bấm */
 .keyPressed {
   background-color: #4caf50 !important;
   color: #fff;
+  transform: translateY(2px); /* Nhấn xuống một chút cho giống thật */
 }
