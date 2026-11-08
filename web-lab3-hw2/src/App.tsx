@@ -3,12 +3,15 @@ import { generate88Keys } from './utils/pianoUtils';
 import { PolyphonicSynth } from './audio/PolyphonicSynth';
 import { PianoKey } from './components/PianoKey';
 import { usePianoKeyboard } from './hooks/usePianoKeyboard';
+import { useSequencer } from './hooks/useSequencer';
+import styles from './App.module.css';
 
 function App() {
   const synthRef = useRef(new PolyphonicSynth(8));
   const keys = useMemo(() => generate88Keys(), []);
   const [pressedKeys, setPressedKeys] = useState<Set<number>>(new Set());
 
+  // Hàm âm thanh cơ bản
   const handleNoteOn = (midi: number, freq: number) => {
     synthRef.current.noteOn(midi, freq);
     setPressedKeys((prev) => new Set(prev).add(midi));
@@ -23,19 +26,72 @@ function App() {
     });
   };
 
-  // Gọi hook bắt sự kiện bàn phím
+  // Tích hợp Sequencer
+  const sequencer = useSequencer(handleNoteOn, handleNoteOff);
+
+  // Bọc lại hàm handleNoteOn/Off để vừa phát nhạc vừa ghi âm
+  const onNoteOnCombined = (midi: number, freq: number) => {
+    handleNoteOn(midi, freq);
+    sequencer.handleRecordNoteOn(midi, freq);
+  };
+
+  const onNoteOffCombined = (midi: number) => {
+    handleNoteOff(midi);
+    sequencer.handleRecordNoteOff(midi);
+  };
+
+  // Kích hoạt bắt sự kiện bàn phím (dùng hàm combined)
   usePianoKeyboard({
-    onNoteOn: handleNoteOn,
-    onNoteOff: handleNoteOff,
+    onNoteOn: onNoteOnCombined,
+    onNoteOff: onNoteOffCombined,
     keysData: keys,
   });
 
   return (
-    <main style={{ padding: '1rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      <h1>88-Key Piano</h1>
+    <main className={styles.container}>
+      <h1>88-Key Piano Sequencer</h1>
       
-      {/* Thêm overflow-x để cuộn ngang */}
-      <section style={{ display: 'flex', position: 'relative', height: '200px', overflowX: 'auto', maxWidth: '100%' }}>
+      {/* Bảng điều khiển */}
+      <section className={styles.controls}>
+        {!sequencer.isRecording ? (
+          <button className={`${styles.button} ${styles.btnRecord}`} onClick={sequencer.startRecording}>
+            Record
+          </button>
+        ) : (
+          <button className={`${styles.button} ${styles.btnStop}`} onClick={sequencer.stopRecording}>
+            Stop Recording ({sequencer.noteCount} notes)
+          </button>
+        )}
+
+        <button 
+          className={`${styles.button} ${styles.btnPlay}`} 
+          onClick={sequencer.playSequence}
+          disabled={sequencer.noteCount === 0 || sequencer.isPlaying}
+        >
+          Play Sequence
+        </button>
+
+        <button 
+          className={`${styles.button} ${styles.btnStop}`} 
+          onClick={sequencer.stopSequence}
+          disabled={!sequencer.isPlaying}
+        >
+          Stop
+        </button>
+
+        <select 
+          className={styles.select}
+          value={sequencer.speed} 
+          onChange={(e) => sequencer.setSpeed(Number(e.target.value))}
+        >
+          <option value={0.5}>0.5x Speed</option>
+          <option value={1}>1.0x Speed</option>
+          <option value={2}>2.0x Speed</option>
+        </select>
+      </section>
+      
+      {/* Bàn phím */}
+      <section className={styles.pianoWrapper}>
         {keys.map((key) => (
           <PianoKey
             key={key.midi}
@@ -44,12 +100,11 @@ function App() {
             freq={key.freq}
             isBlack={key.isBlack}
             isPressed={pressedKeys.has(key.midi)}
-            onNoteOn={handleNoteOn}
-            onNoteOff={handleNoteOff}
+            onNoteOn={onNoteOnCombined}
+            onNoteOff={onNoteOffCombined}
           />
         ))}
       </section>
-      <p style={{ marginTop: '1rem', color: '#666' }}>Sử dụng bàn phím: A, W, S, E, D, F, T, G, Y, H, U, J, K</p>
     </main>
   );
 }
