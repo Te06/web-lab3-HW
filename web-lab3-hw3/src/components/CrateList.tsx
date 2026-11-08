@@ -48,37 +48,36 @@ function CrateItem({
 }
 
 export function CrateList({ initialCrates }: { initialCrates: PubgCrateDrop[] }) {
-  // Đưa data vào state để có thể thay đổi khi mua
   const [crates, setCrates] = useState<PubgCrateDrop[]>(initialCrates);
-  
-  // State lưu ID của rương đang được xử lý (để khóa nút)
   const [claimingId, setClaimingId] = useState<string | null>(null);
   
-  // State lưu thông báo lỗi nếu có
+  // State lưu thông báo lỗi và thành công
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
   const handleClaim = async (crateId: string) => {
+    // Reset thông báo cũ trước khi mua
     setErrorMsg(null);
+    setSuccessMsg(null);
     setClaimingId(crateId);
 
-    // LƯU LẠI STOCK CŨ ĐỂ PHÒNG HỜ ROLLBACK
+    // Lưu lại stock cũ để rollback nếu cần
     const prevCrates = crates;
 
-    // 1. OPTIMISTIC UPDATE: Trừ kho ngay lập tức trên UI
+    // Optimistic Update: Trừ kho ngay lập tức
     setCrates((prev) =>
       prev.map((c) => c.id === crateId ? { ...c, remainingStock: c.remainingStock - 1 } : c)
     );
 
     try {
-      // Gọi API
       await claimCrateApi(crateId);
-      // Nếu thành công thì giữ nguyên, không làm gì cả
+      // Mua thành công thì báo xanh
+      setSuccessMsg('Mua rương thành công!');
     } catch (error: any) {
-      // 2. ROLLBACK: Nếu lỗi, trả lại stock như cũ
+      // Lỗi thì rollback lại kho và báo đỏ
       setCrates(prevCrates);
       setErrorMsg(error.message);
     } finally {
-      // Mở khóa nút
       setClaimingId(null);
     }
   };
@@ -87,12 +86,11 @@ export function CrateList({ initialCrates }: { initialCrates: PubgCrateDrop[] })
     <section aria-label="Danh sách rương">
       <h2>Airdrop Crates</h2>
       
-      {/* Hiển thị lỗi nếu có */}
-      {errorMsg && (
-        <div role="alert" style={{ color: 'red', fontWeight: 'bold', marginBottom: '1rem' }}>
-          {errorMsg}
-        </div>
-      )}
+      {/* Vùng thông báo có aria-live để Screen Reader tự động đọc */}
+      <div aria-live="polite" style={{ minHeight: '24px', marginBottom: '1rem' }}>
+        {errorMsg && <span style={{ color: 'red', fontWeight: 'bold' }}>{errorMsg}</span>}
+        {successMsg && <span style={{ color: 'green', fontWeight: 'bold' }}>{successMsg}</span>}
+      </div>
 
       <div className={styles.crateGrid}>
         {crates.map((crate) => (
