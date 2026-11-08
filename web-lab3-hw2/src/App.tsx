@@ -2,15 +2,11 @@ import { useMemo, useRef, useState } from 'react';
 import { generate88Keys } from './utils/pianoUtils';
 import { PolyphonicSynth } from './audio/PolyphonicSynth';
 import { PianoKey } from './components/PianoKey';
+import { usePianoKeyboard } from './hooks/usePianoKeyboard';
 
 function App() {
-  // Khởi tạo Synth 1 lần duy nhất bằng useRef để không bị reset khi render
   const synthRef = useRef(new PolyphonicSynth(8));
-  
-  // Sinh 88 phím 1 lần duy nhất
   const keys = useMemo(() => generate88Keys(), []);
-
-  // Lưu trạng thái các phím đang được nhấn để đổi màu
   const [pressedKeys, setPressedKeys] = useState<Set<number>>(new Set());
 
   const handleNoteOn = (midi: number, freq: number) => {
@@ -27,12 +23,19 @@ function App() {
     });
   };
 
+  // Gọi hook bắt sự kiện bàn phím
+  usePianoKeyboard({
+    onNoteOn: handleNoteOn,
+    onNoteOff: handleNoteOff,
+    keysData: keys,
+  });
+
   return (
     <main style={{ padding: '1rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <h1>88-Key Piano</h1>
       
-      {/* Khung chứa phím đàn */}
-      <section style={{ display: 'flex', position: 'relative', height: '200px' }}>
+      {/* Thêm overflow-x để cuộn ngang */}
+      <section style={{ display: 'flex', position: 'relative', height: '200px', overflowX: 'auto', maxWidth: '100%' }}>
         {keys.map((key) => (
           <PianoKey
             key={key.midi}
@@ -46,6 +49,7 @@ function App() {
           />
         ))}
       </section>
+      <p style={{ marginTop: '1rem', color: '#666' }}>Sử dụng bàn phím: A, W, S, E, D, F, T, G, Y, H, U, J, K</p>
     </main>
   );
 }

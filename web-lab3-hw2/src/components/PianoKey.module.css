@@ -1,0 +1,43 @@
+.keyWhite {
+  width: 40px;
+  height: 200px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 0 0 5px 5px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 10px;
+  font-size: 10px;
+  color: #333;
+  cursor: pointer;
+  box-sizing: border-box;
+  z-index: 1;
+  user-select: none;
+  position: relative;
+}
+
+.keyBlack {
+  width: 24px;
+  height: 120px;
+  background-color: #222;
+  border: 1px solid #000;
+  border-radius: 0 0 3px 3px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 8px;
+  font-size: 8px;
+  color: #fff;
+  cursor: pointer;
+  box-sizing: border-box;
+  z-index: 2;
+  margin-left: -12px; /* Kéo phím đen đè lên phím trắng */
+  margin-right: -12px;
+  user-select: none;
+}
+
+.keyPressed {
+  background-color: #4caf50 !important;
+  color: #fff;
+}

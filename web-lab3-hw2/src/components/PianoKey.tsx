@@ -1,4 +1,5 @@
 import { memo } from 'react';
+import styles from './PianoKey.module.css';
 
 interface PianoKeyProps {
   midi: number;
@@ -10,7 +11,7 @@ interface PianoKeyProps {
   freq: number;
 }
 
-// Bọc bằng React.memo để nó chỉ render lại khi isPressed thay đổi
+// Bọc bằng React.memo để tối ưu hiệu năng (chỉ render khi isPressed đổi)
 export const PianoKey = memo(function PianoKey({
   midi,
   noteName,
@@ -23,7 +24,7 @@ export const PianoKey = memo(function PianoKey({
   return (
     <button
       type="button"
-      className={`key ${isBlack ? 'key-black' : 'key-white'} ${isPressed ? 'key-pressed' : ''}`}
+      className={`${isBlack ? styles.keyBlack : styles.keyWhite} ${isPressed ? styles.keyPressed : ''}`}
       aria-pressed={isPressed}
       aria-label={`Play ${noteName}`}
       onPointerDown={() => onNoteOn(midi, freq)}
